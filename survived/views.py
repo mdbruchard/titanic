@@ -1,10 +1,6 @@
 from django.shortcuts import render
-from django.http import HttpResponseRedirect, JsonResponse, HttpResponse
-from django.urls import reverse
-import json
-from django.views.decorators.csrf import csrf_exempt
+from django.http import HttpResponse
 
-from sklearn.preprocessing import MinMaxScaler
 import pickle
 import numpy as np
 import pandas as pd
@@ -15,7 +11,7 @@ import pandas as pd
 def index(request):
     return render(request, 'survived/index.html')
 
-@csrf_exempt
+
 def predict(request):
     # Load the model
     with open('data/model.pkl', 'rb') as file:
@@ -40,11 +36,14 @@ def predict(request):
         # Svaing request POST
         name = request.POST['name']
         sex = request.POST['sex']
-
+        
+        # If request post is male turn into 1 else 0
         if sex == 'male':
             sex = 1.0
         else:
             sex = 0.0
+            
+        # Create a new dataframe
         X = pd.DataFrame(
             dict(
             pclass = float(request.POST['pclass']),
@@ -56,14 +55,20 @@ def predict(request):
             ), index=[0]
         )
         
+        # for each colum in the dataset
         for col in df.columns:
+            
+            # save the max and min
             max_range = max(df[col])
             min_range = min(df[col])
 
+            # col in lowercase
             col = col.lower()
            
+            # normalize the new dataframe
             X[col] = (X[col] - min_range) / (max_range - min_range)
-
+        
+        # Turn into array and predcting 
         arr = np.array(X)
         print(arr)
         y_pred = model.predict(arr)
