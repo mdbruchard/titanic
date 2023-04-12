@@ -1,0 +1,40 @@
+{% extends "survived/layout.html" %}
+{% load static %}
+
+{% block title %} Predction {% endblock %}
+
+{% block body %}
+<div class="title-surv">
+    <div class="head-surv">
+
+    <span><a href="{% url 'index' %}">Go back</a></span>
+
+        
+    {% if predict == 1 %}
+    <h2>Good news, {{ name | capfirst  }}</h2>
+    <p> You would be able to survive the Titanic</p>
+    {% else %}
+    <h2>I'm sorry, {{ name }}</h2>
+    <p> you wouldn't make it</p>
+    {% endif %}
+</div>
+    <div class="body-surv">
+
+        <h3>Check this out:</h3>
+        <h4 class="body-title" id="title1">The number of people that survived based on their sex</h4>
+        <img class="image" id="im1" src="{% static 'survived/by_sex.png'%}" alt="survived by sex">
+        <p>There were double of man onboard over woman.</p>
+        <p>The graph show clearly that woman had more chances to survive the Titanic</p>
+        
+        <h4 class="body-title" id="title2">The number of people that survive by class</h4>
+        <img class="image" id="im2" src="{% static 'survived/by_class.png' %}" alt="Survived by class">
+        <p>If you were in the first class, you'd have a high chance to survive too.</p>
+        <p>People that paid more fare and got onboard in the first or second class had more chances to survive</p>
+        <p>The third class had the number of people onboard much higher between the 3 classes <br>
+            Almost 500 people in the third class against ~= 200 people each of the remaining classes
+        </p>
+    </div>
+    
+</div>
+
+{% endblock %}
