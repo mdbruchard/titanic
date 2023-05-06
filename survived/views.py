@@ -18,7 +18,7 @@ def predict(request):
         model = pickle.load(file)
     
     if model is None:
-        return HttpResponse('theres no model')
+        return HttpResponse('there is no model')
 
     # Load the dataset
     df = pd.read_csv('data/train.csv')
@@ -35,47 +35,28 @@ def predict(request):
 
         # Svaing request POST
         name = request.POST['name']
-        sex = request.POST['sex']
-        
-        # If request post is male turn into 1 else 0
-        if sex == 'male':
-            sex = 1.0
-        else:
-            sex = 0.0
-            
+         
         # Create a new dataframe
         X = pd.DataFrame(
             dict(
             pclass = float(request.POST['pclass']),
+            sex = 1.0 if request.POST['sex'] == 'male' else 0.0,
             age = float(request.POST['age']),
-            sex = sex,
-            sibsp = float(request.POST['sibsp']),
-            parch = float(request.POST['parch']),
-            fare = float(request.POST['fare']),
+            sibsp = request.POST['sibsp'],
+            parch = request.POST['parch'],
+            fare = request.POST['fare'],
+            C = 0.0,
+            Q = 0.0,
+            S = 1.0,
+            Master = 1.0 if request.POST['title'] == 'Master' else 0.0,
+            Miss = 1.0 if request.POST['title'] == 'Miss' else 0.0,
+            Mr = 1.0 if request.POST['title'] == 'Mr' else 0.0,
+            Mrs = 1.0 if request.POST['title'] == 'Mrs' else 0.0,
+            Other = 1.0 if request.POST['title'] == 'Other' else 0.0
             ), index=[0]
         )
         
-        # for each colum in the dataset
-        for col in df.columns:
-            
-            # save the max and min
-            max_range = max(df[col])
-            min_range = min(df[col])
-
-            # col in lowercase
-            col = col.lower()
-           
-            # normalize the new dataframe
-            X[col] = (X[col] - min_range) / (max_range - min_range)
-        
-        # Turn into array and predcting 
-        arr = np.array(X)
-        print(arr)
-        y_pred = model.predict(arr)
-        pred = y_pred.tolist()
-
-        print(pred)
-
+        pred = model.predict(X)
         return render(request, 'survived/predict.html', {
             "predict": pred[0],
             "name": name

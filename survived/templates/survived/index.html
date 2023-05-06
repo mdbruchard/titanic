@@ -17,6 +17,15 @@
             <form action="{% url 'predict' %}" method="post" class="form-container">
                 {% csrf_token %}
                 
+                <label for="title">Title</label>
+                <select id="title" name="title" id="title" class="input-form">
+                    <option value="Master">Master</option>
+                    <option value="Miss">Miss</option>
+                    <option value="Mr">Mr</option>
+                    <option value="Mrs">Mrs</option>
+                    <option value="Other">Other</option>
+                </select>
+
                 <label for="name">Full name</label>
                 <input  required type="text" name="name" id="name" maxlength="16" class="input-form"><br>
                 
